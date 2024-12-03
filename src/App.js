@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import LoginPage from "./components/LoginPage";
+import WelcomeScreen from "./components/WelcomeScreen";
+import { signInWithGoogle } from "./firebase"; // Ensure firebase.js has this function
 
-function App() {
+const App = () => {
+  const [user, setUser] = useState(null);
+
+  const handleLogin = async () => {
+    try {
+      const loggedInUser = await signInWithGoogle();
+      setUser(loggedInUser);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {!user ? (
+        <LoginPage handleLogin={handleLogin} />
+      ) : (
+        <WelcomeScreen user={user} />
+      )}
+    </>
   );
-}
+};
 
 export default App;
